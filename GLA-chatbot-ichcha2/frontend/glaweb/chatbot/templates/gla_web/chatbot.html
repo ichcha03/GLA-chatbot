@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GLA University Chatbot - AI Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-green: #006400;
+        --light-green: #dbffe0;
+        --lighter-green: #f9fdf9;
+        --bg-gradient: linear-gradient(135deg, #e6ffe6 0%, #f2fff5 100%);
+        --text-primary: #1a3e1a;
+        --text-secondary: #333;
+        --text-light: #666;
+        --white: #ffffff;
+        --shadow: 0 8px 32px rgba(0, 100, 0, 0.15);
+        --shadow-hover: 0 12px 40px rgba(0, 100, 0, 0.2);
+        --border-radius: 20px;
+        --transition: all 0.3s ease;
+      }
+
+      body {
+        font-family: "Inter", "Segoe UI", sans-serif;
+        background: var(--bg-gradient);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        overflow-x: hidden;
+      }
+
+      .chat-container {
+        width: 100%;
+        max-width: 900px;
+        height: 80vh;
+        max-height: 700px;
+        background: var(--white);
+        border-radius: 24px;
+        border: 2px solid var(--primary-green);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        animation: slideUp 0.8s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .chat-header {
+        background: var(--primary-green);
+        padding: 24px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .chat-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        z-index: 2;
+      }
+
+      .logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        object-fit: contain;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        background: var(--white);
+        padding: 6px;
+      }
+
+      .header-title {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header-title h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 4px;
+        letter-spacing: -0.5px;
+      }
+
+      .header-title .subtitle {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 400;
+      }
+
+      .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 2;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #00ff88;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .status-text {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+      }
+
+      .chat-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 32px;
+        background: var(--lighter-green);
+        background-image: url("frontend/glaweb/chatbot/static/gla-web/image/gla-logo.jpg"),
+          radial-gradient(
+            circle at 10% 20%,
+            rgba(0, 100, 0, 0.05) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(0, 100, 0, 0.03) 0%,
+            transparent 50%
+          );
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 120px, cover, cover;
+        background-blend-mode: overlay;
+        opacity: 0.95;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+      }
+
+      .chat-box::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .chat-box::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .chat-box::-webkit-scrollbar-thumb {
+        background: rgba(0, 100, 0, 0.2);
+        border-radius: 3px;
+      }
+
+      .chat-box::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 100, 0, 0.3);
+      }
+
+      .welcome-message {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-light);
+        animation: fadeIn 1s ease-out 0.5s both;
+      }
+
+      .welcome-message i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: var(--primary-green);
+      }
+
+      .welcome-message h3 {
+        font-size: 20px;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .chat-bubble {
+        max-width: 75%;
+        padding: 16px 20px;
+        border-radius: 20px;
+        font-size: 15px;
+        line-height: 1.6;
+        position: relative;
+        animation: messageSlide 0.4s ease-out;
+        word-wrap: break-word;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      @keyframes messageSlide {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .chat-bubble.user {
+        align-self: flex-end;
+        background: var(--light-green);
+        color: var(--text-primary);
+        border-bottom-right-radius: 8px;
+      }
+
+      .chat-bubble.bot {
+        align-self: flex-start;
+        background: var(--white);
+        color: var(--text-secondary);
+        border-bottom-left-radius: 8px;
+        border: 1px solid rgba(0, 100, 0, 0.1);
+      }
+
+      .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 16px 20px;
+        background: var(--white);
+        border-radius: 20px;
+        border-bottom-left-radius: 8px;
+        max-width: 70%;
+        border: 1px solid rgba(0, 100, 0, 0.1);
+        animation: messageSlide 0.4s ease-out;
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 4px;
+      }
+
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--primary-green);
+        animation: typing 1.4s infinite;
+      }
+
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.4;
+        }
+        30% {
+          transform: translateY(-10px);
+          opacity: 1;
+        }
+      }
+
+      .chat-input {
+        padding: 24px 32px;
+        background: var(--white);
+        border-top: 1px solid rgba(0, 100, 0, 0.1);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .input-wrapper {
+        flex: 1;
+        position: relative;
+      }
+
+      .chat-input input {
+        width: 100%;
+        padding: 16px 20px;
+        background: var(--lighter-green);
+        border: 1px solid rgba(0, 100, 0, 0.2);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 15px;
+        outline: none;
+        transition: var(--transition);
+        font-family: inherit;
+      }
+
+      .chat-input input:focus {
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(0, 100, 0, 0.1);
+      }
+
+      .chat-input input::placeholder {
+        color: var(--text-light);
+      }
+
+      .voice-button {
+        padding: 16px;
+        background: var(--lighter-green);
+        color: var(--primary-green);
+        border: 1px solid rgba(0, 100, 0, 0.2);
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 52px;
+        height: 52px;
+      }
+
+      .voice-button:hover {
+        background: var(--primary-green);
+        color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 100, 0, 0.3);
+      }
+
+      .voice-button.recording {
+        background: #ff4444;
+        color: var(--white);
+        animation: recordingPulse 1s infinite;
+      }
+
+      @keyframes recordingPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .send-button {
+        padding: 16px 20px;
+        background: var(--primary-green);
+        color: var(--white);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 15px;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0, 100, 0, 0.3);
+      }
+
+      .send-button:hover {
+        background: #0a7c0a;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 100, 0, 0.4);
+      }
+
+      .send-button:active {
+        transform: translateY(0);
+      }
+
+      .send-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .quick-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+
+      .quick-action {
+        padding: 8px 16px;
+        background: var(--white);
+        border: 1px solid rgba(0, 100, 0, 0.2);
+        border-radius: 20px;
+        color: var(--text-light);
+        font-size: 14px;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .quick-action:hover {
+        background: var(--primary-green);
+        color: var(--white);
+        transform: translateY(-1px);
+      }
+
+      .message-time {
+        font-size: 12px;
+        color: var(--text-light);
+        margin-top: 4px;
+        opacity: 0.7;
+      }
+
+      .voice-status {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: var(--white);
+        padding: 20px;
+        border-radius: 12px;
+        display: none;
+        text-align: center;
+        z-index: 1000;
+      }
+
+      .voice-status.show {
+        display: block;
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      .sub-topics {
+        margin-top: 16px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 16px;
+        border: 1px solid rgba(0, 100, 0, 0.1);
+        animation: slideIn 0.3s ease-out;
+      }
+
+      .sub-topic-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(0, 100, 0, 0.1);
+      }
+
+      .back-btn {
+        background: var(--light-green);
+        color: var(--primary-green);
+        border: 1px solid rgba(0, 100, 0, 0.2);
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .back-btn:hover {
+        background: var(--primary-green);
+        color: var(--white);
+        transform: translateX(-2px);
+      }
+
+      .sub-topic-header h4 {
+        color: var(--text-primary);
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .sub-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .sub-actions .quick-action {
+        background: var(--lighter-green);
+        border: 1px solid rgba(0, 100, 0, 0.15);
+        font-size: 13px;
+        padding: 10px 14px;
+      }
+
+      .sub-actions .quick-action:hover {
+        background: var(--primary-green);
+        color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 100, 0, 0.2);
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .chat-container {
+          height: 90vh;
+          margin: 10px;
+          border-radius: 16px;
+        }
+
+        .chat-header {
+          padding: 20px;
+        }
+
+        .header-title h1 {
+          font-size: 20px;
+        }
+
+        .logo {
+          width: 65px;
+          height: 65px;
+          border-width: 2px;
+        }
+
+        .chat-box {
+          padding: 20px;
+        }
+
+        .chat-bubble {
+          max-width: 85%;
+        }
+
+        .chat-input {
+          padding: 20px;
+        }
+
+        .sub-topics {
+          padding: 16px;
+        }
+        
+        .sub-topic-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        
+        .back-btn {
+          align-self: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="header-left">
+          <img
+            src="../static/gla_web/image/gla-logo.jpg"
+            alt="GLA University Logo"
+            class="logo"
+          />
+          <div class="header-title">
+            <h1>GLA University Assistant</h1>
+            <div class="subtitle">AI-powered university support</div>
+          </div>
+        </div>
+        <div class="status-indicator">
+          <div class="status-dot"></div>
+          <span class="status-text">Online</span>
+        </div>
+      </div>
+
+      <div class="chat-box" id="chat-box">
+        <div class="welcome-message">
+          <i class="fas fa-robot"></i>
+          <h3>Welcome to GLA University Assistant!</h3>
+          <p>
+            I'm here to help you with any questions about GLA University. Ask me
+            about fees, placements, hostels, or anything else!
+          </p>
+          <div class="quick-actions" id="main-topics">
+            <div class="quick-action" onclick="showSubTopics('admissions')">
+              🎓 Admissions
+            </div>
+            <div class="quick-action" onclick="showSubTopics('academics')">
+              📚 Academics
+            </div>
+            <div class="quick-action" onclick="showSubTopics('fees')">
+              💰 Fees & Scholarships
+            </div>
+            <div class="quick-action" onclick="showSubTopics('placements')">
+              🎯 Placements
+            </div>
+            <div class="quick-action" onclick="showSubTopics('facilities')">
+              🏢 Facilities
+            </div>
+            <div class="quick-action" onclick="showSubTopics('campus')">
+              🌳 Campus Life
+            </div>
+            <div class="quick-action" onclick="showSubTopics('others')">
+              ➕ Others
+            </div>
+          </div>
+          <div class="sub-topics" id="admissions-subtopics" style="display: none;">
+            <div class="sub-topic-header">
+              <button onclick="showMainTopics()" class="back-btn">← Back to Main Topics</button>
+              <h4>🎓 Admissions</h4>
+            </div>
+            <div class="sub-actions">
+              <div class="quick-action" onclick="sendQuickMessage('What are the eligibility criteria for B.Tech?')">
+                📋 Eligibility Criteria
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('How to apply for admission?')">
+                📝 Application Process
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What are the entrance exams accepted?')">
+                📊 Entrance Exams
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What are the important admission dates?')">
+                📅 Important Dates
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about document verification process')">
+                📄 Document Verification
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What is the admission counselling process?')">
+                🗣️ Counselling Process
+              </div>
+            </div>
+          </div>
+          <div class="sub-topics" id="academics-subtopics" style="display: none;">
+            <div class="sub-topic-header">
+              <button onclick="showMainTopics()" class="back-btn">← Back to Main Topics</button>
+              <h4>📚 Academics</h4>
+            </div>
+            <div class="sub-actions">
+              <div class="quick-action" onclick="sendQuickMessage('What are the B.Tech specializations available?')">
+                🔧 B.Tech Programs
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about MBA programs')">
+                💼 MBA Programs
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What are the M.Tech specializations?')">
+                🎓 M.Tech Programs
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about the examination system')">
+                📝 Examination System
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What is the grading system?')">
+                📊 Grading System
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about faculty and teaching methods')">
+                👨‍🏫 Faculty & Teaching
+              </div>
+            </div>
+          </div>
+          <div class="sub-topics" id="fees-subtopics" style="display: none;">
+            <div class="sub-topic-header">
+              <button onclick="showMainTopics()" class="back-btn">← Back to Main Topics</button>
+              <h4>💰 Fees & Scholarships</h4>
+            </div>
+            <div class="sub-actions">
+              <div class="quick-action" onclick="sendQuickMessage('What are the fees for B.Tech?')">
+                💰 B.Tech Fees
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about MBA fees structure')">
+                💳 MBA Fees
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What scholarships are available?')">
+                🏆 Scholarships
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about fee payment options')">
+                💸 Payment Options
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What are the additional charges?')">
+                📋 Additional Charges
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about fee refund policy')">
+                🔄 Refund Policy
+              </div>
+            </div>
+          </div>
+          <div class="sub-topics" id="placements-subtopics" style="display: none;">
+            <div class="sub-topic-header">
+              <button onclick="showMainTopics()" class="back-btn">← Back to Main Topics</button>
+              <h4>🎯 Placements</h4>
+            </div>
+            <div class="sub-actions">
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about placement statistics')">
+                📊 Placement Statistics
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Who are the top recruiters?')">
+                🏢 Top Recruiters
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What is the average package offered?')">
+                💰 Package Details
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about internship opportunities')">
+                🔗 Internships
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('How does the placement cell work?')">
+                🎯 Placement Cell
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What is the placement preparation process?')">
+                📚 Placement Preparation
+              </div>
+            </div>
+          </div>
+          <div class="sub-topics" id="facilities-subtopics" style="display: none;">
+            <div class="sub-topic-header">
+              <button onclick="showMainTopics()" class="back-btn">← Back to Main Topics</button>
+              <h4>🏢 Facilities</h4>
+            </div>
+            <div class="sub-actions">
+              <div class="quick-action" onclick="sendQuickMessage('Hostel facilities and fees')">
+                🏠 Hostel Facilities
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about library facilities')">
+                📚 Library
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What are the laboratory facilities?')">
+                🔬 Laboratories
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about sports facilities')">
+                ⚽ Sports Facilities
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What medical facilities are available?')">
+                🏥 Medical Facilities
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about IT infrastructure')">
+                💻 IT Infrastructure
+              </div>
+            </div>
+          </div>
+          <div class="sub-topics" id="campus-subtopics" style="display: none;">
+            <div class="sub-topic-header">
+              <button onclick="showMainTopics()" class="back-btn">← Back to Main Topics</button>
+              <h4>🌳 Campus Life</h4>
+            </div>
+            <div class="sub-actions">
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about student clubs and societies')">
+                🎭 Clubs & Societies
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What cultural events are organized?')">
+                🎪 Cultural Events
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about technical fests')">
+                🔧 Technical Fests
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What are the mess and canteen facilities?')">
+                🍽️ Food & Dining
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about transportation facilities')">
+                🚌 Transportation
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What security measures are in place?')">
+                🔒 Security
+              </div>
+            </div>
+          </div>
+          <div class="sub-topics" id="others-subtopics" style="display: none;">
+            <div class="sub-topic-header">
+              <button onclick="showMainTopics()" class="back-btn">← Back to Main Topics</button>
+              <h4>➕ Others</h4>
+            </div>
+            <div class="sub-actions">
+              <div class="quick-action" onclick="sendQuickMessage('What is the university ranking?')">
+                🏆 Rankings
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about alumni network')">
+                👥 Alumni Network
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What are the university affiliations?')">
+                🔗 Affiliations
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('Tell me about research opportunities')">
+                🔬 Research
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('What international programs are available?')">
+                🌍 International Programs
+              </div>
+              <div class="quick-action" onclick="sendQuickMessage('How to contact the university?')">
+                📞 Contact Information
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="user-input"
+            placeholder="Type your message or use voice input..."
+          />
+        </div>
+        <button
+          class="voice-button"
+          id="voice-btn"
+        >
+          <i class="fas fa-microphone"></i>
+        </button>
+        <button class="send-button" id="send-btn">
+          <i class="fas fa-paper-plane"></i>
+          Send
+        </button>
+      </div>
+
+      <div class="voice-status" id="voice-status">
+        <i class="fas fa-microphone fa-2x"></i>
+        <p id="voice-status-text">Listening...</p>
+      </div>
+    </div>
+
+    <script>
+      let messageCount = 0;
+      let isRecording = false;
+      let recognition = null;
+
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          sendMessage();
+        }
+      }
+
+      function showSubTopics(topicId) {
+        const mainTopics = document.getElementById('main-topics');
+        if (mainTopics) {
+          mainTopics.style.display = 'none';
+        } else {
+          console.error("Element with ID 'main-topics' not found");
+        }
+      
+        // Hide all sub-topics
+        const allSubTopics = document.querySelectorAll('.sub-topics');
+        allSubTopics.forEach(subTopic => {
+          subTopic.style.display = 'none';
+        });
+      
+        // Show selected sub-topic
+        const selectedSubTopic = document.getElementById(topicId + '-subtopics');
+        if (selectedSubTopic) {
+          selectedSubTopic.style.display = 'block';
+        } else {
+          console.error(`Element with ID '${topicId}-subtopics' not found`);
+          if (mainTopics) mainTopics.style.display = 'flex'; // Fallback
+        }
+      
+        // Scroll to bottom
+        const chatBox = document.getElementById('chat-box');
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function showMainTopics() {
+        // Hide all sub-topics
+        const allSubTopics = document.querySelectorAll('.sub-topics');
+        allSubTopics.forEach(subTopic => {
+          subTopic.style.display = 'none';
+        });
+        
+        // Show main topics
+        document.getElementById('main-topics').style.display = 'flex';
+      }
+
+      function sendQuickMessage(message) {
+        const inputField = document.getElementById("user-input");
+        inputField.value = message;
+        sendMessage();
+      }
+
+      function sendMessage() {
+        const inputField = document.getElementById("user-input");
+        const userMessage = inputField.value.trim();
+        if (!userMessage) return;
+
+        const chatBox = document.getElementById("chat-box");
+        const sendBtn = document.getElementById("send-btn");
+
+        // Remove welcome message if it exists
+        const welcomeMessage = chatBox.querySelector(".welcome-message");
+        if (welcomeMessage) {
+          welcomeMessage.style.animation = "fadeOut 0.3s ease-out forwards";
+          setTimeout(() => welcomeMessage.remove(), 300);
+        }
+
+        // Disable send button temporarily
+        sendBtn.disabled = true;
+
+        // Add user's message
+        const userBubble = document.createElement("div");
+        userBubble.className = "chat-bubble user";
+        userBubble.innerHTML = `
+                ${userMessage}
+                <div class="message-time">${getCurrentTime()}</div>
+            `;
+        chatBox.appendChild(userBubble);
+        inputField.value = "";
+
+        // Scroll to bottom
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Show typing indicator
+        const typingIndicator = document.createElement("div");
+        typingIndicator.className = "typing-indicator";
+        typingIndicator.innerHTML = `
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+                <span style="color: var(--text-light); font-size: 14px;">Assistant is typing...</span>
+            `;
+        chatBox.appendChild(typingIndicator);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Simulate bot response with realistic delay
+        setTimeout(() => {
+          typingIndicator.remove();
+
+          const botBubble = document.createElement("div");
+          botBubble.className = "chat-bubble bot";
+          const response = getFakeAnswer(userMessage);
+          botBubble.innerHTML = `
+                    ${response}
+                    <div class="message-time">${getCurrentTime()}</div>
+                `;
+          chatBox.appendChild(botBubble);
+          chatBox.scrollTop = chatBox.scrollHeight;
+
+          // Re-enable send button
+          sendBtn.disabled = false;
+        }, 1500 + Math.random() * 1000);
+      }
+
+      function getCurrentTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function getFakeAnswer(question) {
+        question = question.toLowerCase().trim();
+
+        // Admissions
+        if (question.includes("eligib") || question.includes("criteria") || question.includes("qualification") || question.includes("requirements")) {
+          return `
+            <strong>📋 Eligibility Criteria:</strong><br><br>
+            <strong>B.Tech:</strong> 12th with Physics, Chemistry, and Mathematics, minimum 60% aggregate (55% for reserved categories).<br>
+            <strong>M.Tech:</strong> B.Tech/B.E. in relevant discipline with minimum 60% marks.<br>
+            <strong>MBA:</strong> Bachelor's degree in any discipline with minimum 50% marks.<br>
+            <strong>Other Programs:</strong> Varies by program; check specific requirements on the university website.<br>
+            <strong>Entrance Exams:</strong> JEE Main/UPSEE for B.Tech, GATE for M.Tech, CAT/MAT for MBA.<br><br>
+            <em>Eligibility relaxation for reserved categories as per government norms. Contact admissions office for details.</em>
+          `;
+        } else if (question.includes("apply") || question.includes("application") || question.includes("admission process") || question.includes("how to get in")) {
+          return `
+            <strong>📝 Application Process:</strong><br><br>
+            <strong>Step 1:</strong> Visit www.gla.ac.in and register online.<br>
+            <strong>Step 2:</strong> Fill out the application form with personal and academic details.<br>
+            <strong>Step 3:</strong> Upload required documents (marksheets, photo, ID proof).<br>
+            <strong>Step 4:</strong> Pay the application fee (₹1000 for most programs).<br>
+            <strong>Step 5:</strong> Submit the form and note the application ID.<br>
+            <strong>Step 6:</strong> Await confirmation for entrance exam or counselling.<br><br>
+            <em>Applications are accepted online only. Ensure all details are accurate to avoid delays.</em>
+          `;
+        } else if (question.includes("entrance exam") || question.includes("test") || question.includes("admission exam")) {
+          return `
+            <strong>📊 Entrance Exams Accepted:</strong><br><br>
+            <strong>B.Tech:</strong> JEE Main, UPSEE<br>
+            <strong>M.Tech:</strong> GATE, GLA Entrance Test (for non-GATE candidates)<br>
+            <strong>MBA:</strong> CAT, MAT, XAT, CMAT, GLA Management Aptitude Test<br>
+            <strong>Other Programs:</strong> GLA Entrance Test or specific national/state-level exams.<br><br>
+            <em>Check the university website for specific exam requirements and cut-off scores.</em>
+          `;
+        } else if (question.includes("important dates") || question.includes("admission dates") || question.includes("deadline") || question.includes("schedule")) {
+          return `
+            <strong>📅 Important Admission Dates (2025):</strong><br><br>
+            <strong>Application Start:</strong> January 2025<br>
+            <strong>Application Deadline:</strong> June 2025<br>
+            <strong>Entrance Exams:</strong> April–June 2025 (varies by exam)<br>
+            <strong>Counselling:</strong> July–August 2025<br>
+            <strong>Session Start:</strong> August 2025<br><br>
+            <em>Dates are tentative and subject to change. Visit www.gla.ac.in for the latest updates.</em>
+          `;
+        } else if (question.includes("document") || question.includes("verification") || question.includes("paperwork")) {
+          return `
+            <strong>📄 Document Verification Process:</strong><br><br>
+            <strong>Required Documents:</strong> 10th & 12th marksheets, entrance exam scorecard, ID proof, passport-size photos, caste certificate (if applicable), migration certificate.<br>
+            <strong>Process:</strong> Submit originals and photocopies during counselling. Documents are verified by the admissions office for authenticity.<br>
+            <strong>Online Verification:</strong> Upload scanned copies during application.<br>
+            <strong>Timeline:</strong> Completed during counselling sessions in July–August.<br><br>
+            <em>Ensure all documents are complete to avoid delays in admission.</em>
+          `;
+        } else if (question.includes("counselling") || question.includes("counseling") || question.includes("admission guidance")) {
+          return `
+            <strong>🗣️ Counselling Process:</strong><br><br>
+            <strong>Step 1:</strong> Register for counselling on www.gla.ac.in.<br>
+            <strong>Step 2:</strong> Choose preferred program and specialization.<br>
+            <strong>Step 3:</strong> Attend counselling session (online/offline) with documents.<br>
+            <strong>Step 4:</strong> Seat allocation based on merit and availability.<br>
+            <strong>Step 5:</strong> Pay admission fee to confirm the seat.<br><br>
+            <em>Counselling schedules are announced post-entrance exam results.</em>
+          `;
+        }
+
+        // Academics
+        else if (question.includes("b.tech") && (question.includes("specialization") || question.includes("branch") || question.includes("program") || question.includes("course"))) {
+          return `
+            <strong>🔧 B.Tech Specializations:</strong><br><br>
+            <strong>Available Programs:</strong><br>
+            - Computer Science and Engineering (CSE)<br>
+            - Information Technology (IT)<br>
+            - Electronics and Communication Engineering (ECE)<br>
+            - Mechanical Engineering (ME)<br>
+            - Civil Engineering (CE)<br>
+            - Electrical Engineering (EE)<br>
+            - Artificial Intelligence & Machine Learning<br>
+            - Cyber Security<br><br>
+            <em>Each program includes industry-oriented training and projects. Check www.gla.ac.in for detailed curriculum.</em>
+          `;
+        } else if (question.includes("mba") && (question.includes("program") || question.includes("course") || question.includes("specialization"))) {
+          return `
+            <strong>💼 MBA Programs:</strong><br><br>
+            <strong>Specializations:</strong><br>
+            - Marketing<br>
+            - Finance<br>
+            - Human Resource Management<br>
+            - International Business<br>
+            - Operations Management<br>
+            - Business Analytics<br>
+            <strong>Duration:</strong> 2 years<br>
+            <strong>Eligibility:</strong> Bachelor's degree with 50% marks, CAT/MAT/XAT/CMAT score.<br>
+            <strong>Features:</strong> Case studies, internships, and corporate exposure.<br><br>
+            <em>Designed to develop leadership and management skills for global careers.</em>
+          `;
+        } else if (question.includes("m.tech") && (question.includes("specialization") || question.includes("branch") || question.includes("program") || question.includes("course"))) {
+          return `
+            <strong>🎓 M.Tech Specializations:</strong><br><br>
+            <strong>Available Programs:</strong><br>
+            - Computer Science and Engineering<br>
+            - Electronics and Communication Engineering<br>
+            - Mechanical Engineering<br>
+            - Civil Engineering (Structural/Transportation)<br>
+            - Electrical Engineering (Power Systems)<br>
+            <strong>Duration:</strong> 2 years<br>
+            <strong>Eligibility:</strong> B.Tech/B.E. with 60% marks, GATE score preferred.<br><br>
+            <em>Focus on advanced research and technical expertise.</em>
+          `;
+        } else if (question.includes("exam") && (question.includes("system") || question.includes("pattern") || question.includes("structure"))) {
+          return `
+            <strong>📝 Examination System:</strong><br><br>
+            <strong>Semester System:</strong> Two semesters per academic year.<br>
+            <strong>Exams:</strong> Mid-term and end-term exams for each semester.<br>
+            <strong>Evaluation:</strong> Combination of theory exams (60%), practicals (20%), assignments/projects (20%).<br>
+            <strong>Schedule:</strong> Mid-terms in October/March, end-terms in December/June.<br><br>
+            <em>Regular assessments ensure continuous learning and feedback.</em>
+          `;
+        } else if (question.includes("grading") || question.includes("marks") || question.includes("evaluation")) {
+          return `
+            <strong>📊 Grading System:</strong><br><br>
+            <strong>CGPA System:</strong> Cumulative Grade Point Average on a 10-point scale.<br>
+            <strong>Grades:</strong> A+ (10), A (9), B+ (8), B (7), C+ (6), C (5), F (Fail).<br>
+            <strong>Credits:</strong> Each course has assigned credits based on hours.<br>
+            <strong>Pass Criteria:</strong> Minimum 5.0 CGPA per semester.<br><br>
+            <em>Transparent grading with regular result announcements.</em>
+          `;
+        } else if (question.includes("faculty") || question.includes("teacher") || question.includes("teaching") || question.includes("professor")) {
+          return `
+            <strong>👨‍🏫 Faculty & Teaching Methods:</strong><br><br>
+            <strong>Faculty:</strong> Over 500 experienced faculty, 70% with Ph.D. degrees.<br>
+            <strong>Teaching Methods:</strong> Lectures, practical labs, case studies, group projects, seminars.<br>
+            <strong>Technology:</strong> Smart classrooms, online learning platforms (Moodle).<br>
+            <strong>Mentorship:</strong> Each student assigned a faculty mentor for guidance.<br><br>
+            <em>Focus on interactive and practical learning for holistic development.</em>
+          `;
+        }
+
+        // Fees & Scholarships
+        else if (question.includes("b.tech") && (question.includes("fee") || question.includes("cost") || question.includes("tuition"))) {
+          return `
+            <strong>💰 B.Tech Fees Structure:</strong><br><br>
+            <strong>Tuition Fee:</strong> ₹1,50,000 per year.<br>
+            <strong>Other Fees:</strong> ₹10,000 (exam fees, library, etc.).<br>
+            <strong>Total (First Year):</strong> Approx. ₹1,60,000.<br>
+            <strong>Hostel Fee:</strong> ₹85,000 per year (optional).<br><br>
+            <em>Fees vary by specialization. Scholarships available for eligible students.</em>
+          `;
+        } else if (question.includes("mba") && (question.includes("fee") || question.includes("cost") || question.includes("tuition"))) {
+          return `
+            <strong>💳 MBA Fees Structure:</strong><br><br>
+            <strong>Tuition Fee:</strong> ₹2,00,000 per year.<br>
+            <strong>Other Fees:</strong> ₹12,000 (exam fees, library, etc.).<br>
+            <strong>Total (First Year):</strong> Approx. ₹2,12,000.<br>
+            <strong>Hostel Fee:</strong> ₹85,000 per year (optional).<br><br>
+            <em>Fees may vary based on specialization. Financial aid available.</em>
+          `;
+        } else if (question.includes("scholarship") || question.includes("financial aid") || question.includes("funding")) {
+          return `
+            <strong>🏆 Scholarship Programs:</strong><br><br>
+            <strong>Merit Scholarship:</strong> Up to 50% fee waiver for top performers (90%+ in 12th/GATE/CAT).<br>
+            <strong>Need-based Aid:</strong> Financial support for economically weaker students.<br>
+            <strong>Sports Scholarship:</strong> For state/national-level athletes.<br>
+            <strong>Government Schemes:</strong> SC/ST/OBC scholarships as per UP government norms.<br>
+            <strong>Application:</strong> Apply during admission with relevant documents.<br><br>
+            <em>Contact the scholarship office for detailed eligibility and deadlines.</em>
+          `;
+        } else if (question.includes("payment") || question.includes("pay") || question.includes("installment") || question.includes("loan")) {
+          return `
+            <strong>💸 Fee Payment Options:</strong><br><br>
+            <strong>Online Payment:</strong> Credit/Debit Card, Net Banking, UPI.<br>
+            <strong>Bank Transfer:</strong> Direct deposit to university account.<br>
+            <strong>Installments:</strong> Semester-wise payment option available.<br>
+            <strong>Education Loan:</strong> Tie-ups with SBI, HDFC, and other banks.<br><br>
+            <em>Payment details available on www.gla.ac.in. Contact finance office for assistance.</em>
+          `;
+        } else if (question.includes("additional charge") || question.includes("extra fee") || question.includes("other cost")) {
+          return `
+            <strong>📋 Additional Charges:</strong><br><br>
+            <strong>Examination Fee:</strong> ₹5,000 per semester.<br>
+            <strong>Library Fee:</strong> ₹3,000 per year.<br>
+            <strong>Lab Fee:</strong> ₹2,000–₹5,000 per year (program-specific).<br>
+            <strong>Miscellaneous:</strong> ₹2,000 (ID card, registration, etc.).<br><br>
+            <em>All charges are included in the fee structure. No hidden costs.</em>
+          `;
+        } else if (question.includes("refund") || question.includes("return") || question.includes("cancellation")) {
+          return `
+            <strong>🔄 Fee Refund Policy:</strong><br><br>
+            <strong>Before Session Start:</strong> 90% refund (excluding registration fee).<br>
+            <strong>Within 15 Days:</strong> 50% refund of tuition fee.<br>
+            <strong>After 15 Days:</strong> No refund.<br>
+            <strong>Process:</strong> Submit refund request via university portal.<br><br>
+            <em>Refunds processed within 30 days. Contact finance office for details.</em>
+          `;
+        }
+
+        // Placements
+        else if (question.includes("placement") && (question.includes("statistic") || question.includes("record") || question.includes("data"))) {
+          return `
+            <strong>📊 Placement Statistics (2024):</strong><br><br>
+            <strong>Placement Rate:</strong> 85%+ for B.Tech, 90% for MBA.<br>
+            <strong>Total Companies:</strong> 150+ companies visited.<br>
+            <strong>Students Placed:</strong> Over 1,200 students.<br>
+            <strong>Highest Package:</strong> ₹12 LPA (B.Tech), ₹15 LPA (MBA).<br><br>
+            <em>Strong industry connections ensure high placement rates.</em>
+          `;
+        } else if (question.includes("recruiter") || question.includes("company") || question.includes("employer")) {
+          return `
+            <strong>🏢 Top Recruiters:</strong><br><br>
+            <strong>IT Sector:</strong> Wipro, TCS, Infosys, HCL, Cognizant, Tech Mahindra.<br>
+            <strong>Core Engineering:</strong> L&T, Tata Motors, Bosch.<br>
+            <strong>Management:</strong> Deloitte, ICICI Bank, HDFC Bank.<br>
+            <strong>Others:</strong> Amazon, Accenture, Capgemini.<br><br>
+            <em>Over 150 companies visit annually for campus recruitment.</em>
+          `;
+        } else if (question.includes("package") || question.includes("salary") || question.includes("pay") || question.includes("compensation")) {
+          return `
+            <strong>💰 Package Details (2024):</strong><br><br>
+            <strong>Average Package:</strong> ₹4.5 LPA (B.Tech), ₹5 LPA (MBA).<br>
+            <strong>Highest Package:</strong> ₹12 LPA (B.Tech), ₹15 LPA (MBA).<br>
+            <strong>Median Package:</strong> ₹4 LPA (B.Tech), ₹4.8 LPA (MBA).<br>
+            <strong>Internship Stipend:</strong> ₹10,000–₹50,000 per month.<br><br>
+            <em>Packages vary by company and specialization.</em>
+          `;
+        } else if (question.includes("internship") || question.includes("training") || question.includes("work experience")) {
+          return `
+            <strong>🔗 Internship Opportunities:</strong><br><br>
+            <strong>Duration:</strong> 2–6 months (summer/winter internships).<br>
+            <strong>Companies:</strong> TCS, Infosys, L&T, Deloitte, local startups.<br>
+            <strong>Stipend:</strong> ₹10,000–₹50,000 per month.<br>
+            <strong>Support:</strong> Placement cell assists with applications and interviews.<br><br>
+            <em>Internships provide practical exposure and pre-placement offers.</em>
+          `;
+        } else if (question.includes("placement cell") || question.includes("career") || question.includes("job support")) {
+          return `
+            <strong>🎯 Placement Cell:</strong><br><br>
+            <strong>Role:</strong> Organizes campus drives, training, and career counselling.<br>
+            <strong>Activities:</strong> Mock interviews, resume workshops, GD sessions.<br>
+            <strong>Industry Tie-ups:</strong> 150+ companies including TCS, Wipro, Deloitte.<br>
+            <strong>Support:</strong> Dedicated coordinators for each department.<br><br>
+            <em>Ensures students are job-ready with strong industry connections.</em>
+          `;
+        } else if (question.includes("placement preparation") || question.includes("training") || question.includes("job prep")) {
+          return `
+            <strong>📚 Placement Preparation:</strong><br><br>
+            <strong>Training:</strong> Aptitude tests, technical interviews, coding practice.<br>
+            <strong>Workshops:</strong> Resume building, soft skills, group discussions.<br>
+            <strong>Mock Interviews:</strong> Conducted by industry experts.<br>
+            <strong>Resources:</strong> Online portals, study materials, alumni talks.<br><br>
+            <em>Comprehensive preparation starts from the third year.</em>
+          `;
+        }
+
+        // Facilities
+        else if (question.includes("hostel") || question.includes("accommodation") || question.includes("housing") || question.includes("dorm")) {
+          return `
+            <strong>🏠 Hostel Facilities:</strong><br><br>
+            <strong>Fee:</strong> ₹85,000 per year (includes mess).<br>
+            <strong>Types:</strong> AC/Non-AC rooms, single/double/triple sharing.<br>
+            <strong>Amenities:</strong> WiFi, 24/7 power backup, laundry, gym.<br>
+            <strong>Mess:</strong> Vegetarian meals with weekly menu rotation.<br>
+            <strong>Security:</strong> 24/7 CCTV surveillance, biometric access.<br><br>
+            <em>Separate hostels for boys and girls with modern amenities.</em>
+          `;
+        } else if (question.includes("library") || question.includes("books") || question.includes("study resources")) {
+          return `
+            <strong>📚 Library Facilities:</strong><br><br>
+            <strong>Collection:</strong> 50,000+ books, 10,000+ e-journals, 500+ print journals.<br>
+            <strong>Digital Access:</strong> IEEE, ACM, Springer, Elsevier databases.<br>
+            <strong>Facilities:</strong> Silent study zones, group discussion rooms, e-library.<br>
+            <strong>Timing:</strong> 8:00 AM–10:00 PM (extended during exams).<br><br>
+            <em>Modern library with resources for academic and research needs.</em>
+          `;
+        } else if (question.includes("laboratory") || question.includes("lab") || question.includes("research facility")) {
+          return `
+            <strong>🔬 Laboratory Facilities:</strong><br><br>
+            <strong>Engineering Labs:</strong> Advanced equipment for CSE, ECE, ME, CE, EE.<br>
+            <strong>Computer Labs:</strong> 500+ high-end systems, high-speed internet.<br>
+            <strong>Research Labs:</strong> Specialized labs for AI, robotics, IoT.<br>
+            <strong>Software:</strong> MATLAB, AutoCAD, Python, Java, and more.<br><br>
+            <em>Hands-on learning with industry-standard equipment.</em>
+          `;
+        } else if (question.includes("sports") || question.includes("gym") || question.includes("athletic")) {
+          return `
+            <strong>⚽ Sports Facilities:</strong><br><br>
+            <strong>Outdoor:</strong> Cricket ground, football field, basketball courts.<br>
+            <strong>Indoor:</strong> Table tennis, badminton, chess, carrom.<br>
+            <strong>Gym:</strong> Fully equipped with modern equipment.<br>
+            <strong>Events:</strong> Annual sports fest, inter-department tournaments.<br><br>
+            <em>Promotes physical fitness and team spirit.</em>
+          `;
+        } else if (question.includes("medical") || question.includes("health") || question.includes("hospital")) {
+          return `
+            <strong>🏥 Medical Facilities:</strong><br><br>
+            <strong>Hospital:</strong> On-campus 10-bed medical centre.<br>
+            <strong>Staff:</strong> Resident doctors, nurses, 24/7 ambulance service.<br>
+            <strong>Services:</strong> First aid, routine check-ups, emergency care.<br>
+            <strong>Insurance:</strong> Optional student health insurance plan.<br><br>
+            <em>Ensures student health and safety round the clock.</em>
+          `;
+        } else if (question.includes("it infrastructure") || question.includes("wifi") || question.includes("computer lab")) {
+          return `
+            <strong>💻 IT Infrastructure:</strong><br><br>
+            <strong>Internet:</strong> 1 Gbps campus-wide WiFi.<br>
+            <strong>Computer Labs:</strong> 500+ systems with latest software.<br>
+            <strong>Servers:</strong> Dedicated servers for online learning and exams.<br>
+            <strong>Support:</strong> 24/7 IT helpdesk for technical issues.<br><br>
+            <em>Robust IT infrastructure supports seamless learning and research.</em>
+          `;
+        }
+
+        // Campus Life
+        else if (question.includes("club") || question.includes("societies") || question.includes("extracurricular") || question.includes("student activity")) {
+          return `
+            <strong>🎭 Clubs & Societies:</strong><br><br>
+            <strong>Technical Clubs:</strong> Coding Club, Robotics Club, AI Club.<br>
+            <strong>Cultural Societies:</strong> Music, Dance, Drama, Literary Society.<br>
+            <strong>Sports Clubs:</strong> Cricket, Football, Basketball, Volleyball.<br>
+            <strong>Other Clubs:</strong> Photography, NSS, Eco Club, Debate Club.<br>
+            <strong>Events:</strong> Annual fests, workshops, competitions.<br><br>
+            <em>Join clubs to develop skills and network with peers.</em>
+          `;
+        } else if (question.includes("cultural event") || question.includes("fest") || question.includes("cultural fest")) {
+          return `
+            <strong>🎪 Cultural Events:</strong><br><br>
+            <strong>Annual Fest:</strong> Spandan – music, dance, drama, fashion show.<br>
+            <strong>Events:</strong> Talent shows, cultural nights, traditional day.<br>
+            <strong>Participation:</strong> Open to all students, inter-department competitions.<br>
+            <strong>Frequency:</strong> Monthly events, major fest in February.<br><br>
+            <em>Celebrates diversity and creativity on campus.</em>
+          `;
+        } else if (question.includes("technical fest") || question.includes("tech fest") || question.includes("technovation")) {
+          return `
+            <strong>🔧 Technical Fests:</strong><br><br>
+            <strong>TechFest:</strong> Technovation – coding, robotics, hackathons.<br>
+            <strong>Events:</strong> Project exhibitions, tech quizzes, workshops.<br>
+            <strong>Guests:</strong> Industry experts, alumni speakers.<br>
+            <strong>Frequency:</strong> Annual event in March.<br><br>
+            <em>Showcase innovation and technical skills.</em>
+          `;
+        } else if (question.includes("mess") || question.includes("canteen") || question.includes("food") || question.includes("dining")) {
+          return `
+            <strong>🍽️ Food & Dining:</strong><br><br>
+            <strong>Mess:</strong> Vegetarian meals, weekly menu rotation, special diet options.<br>
+            <strong>Canteen:</strong> Multiple canteens with snacks, beverages, fast food.<br>
+            <strong>Cost:</strong> Included in hostel fee; canteen prices ₹20–₹100.<br>
+            <strong>Hygiene:</strong> Regular inspections, high cleanliness standards.<br><br>
+            <em>Nutritious and affordable dining options for all students.</em>
+          `;
+        } else if (question.includes("transport") || question.includes("bus") || question.includes("commute")) {
+          return `
+            <strong>🚌 Transportation:</strong><br><br>
+            <strong>Bus Service:</strong> Daily buses to Mathura, Agra, and nearby areas.<br>
+            <strong>Fee:</strong> ₹20,000 per year (optional).<br>
+            <strong>Routes:</strong> Covers major city points and railway stations.<br>
+            <strong>Safety:</strong> GPS-tracked buses, trained drivers.<br><br>
+            <em>Convenient and safe transport for students.</em>
+          `;
+        } else if (question.includes("security") || question.includes("safety") || question.includes("protection")) {
+          return `
+            <strong>🔒 Security Measures:</strong><br><br>
+            <strong>CCTV:</strong> 24/7 surveillance across campus and hostels.<br>
+            <strong>Guards:</strong> Trained security personnel at all entry points.<br>
+            <strong>Access Control:</strong> Biometric/ID card access for hostels and labs.<br>
+            <strong>Emergency:</strong> 24/7 helpline, rapid response team.<br><br>
+            <em>Ensures a safe and secure campus environment.</em>
+          `;
+        }
+
+        // Others
+        else if (question.includes("ranking") || question.includes("accreditation") || question.includes("reputation")) {
+          return `
+            <strong>🏆 University Rankings & Recognition:</strong><br><br>
+            <strong>NAAC Grade:</strong> A+ Accredited (2023).<br>
+            <strong>NBA Accreditation:</strong> B.Tech programs accredited.<br>
+            <strong>NIRF Ranking:</strong> Top 100 private universities in India.<br>
+            <strong>Approvals:</strong> AICTE, UGC, PCI, BCI approved.<br><br>
+            <em>Recognized for academic excellence and industry alignment.</em>
+          `;
+        } else if (question.includes("alumni") || question.includes("graduates") || question.includes("former students")) {
+          return `
+            <strong>👥 Alumni Network:</strong><br><br>
+            <strong>Network:</strong> 10,000+ alumni worldwide.<br>
+            <strong>Engagement:</strong> Annual alumni meets, mentorship programs.<br>
+            <strong>Notable Alumni:</strong> Leaders in IT, engineering, and management sectors.<br>
+            <strong>Support:</strong> Alumni provide internships, job referrals, and guest lectures.<br><br>
+            <em>Strong alumni network enhances career opportunities.</em>
+          `;
+        } else if (question.includes("affiliation") || question.includes("collaboration") || question.includes("partnership")) {
+          return `
+            <strong>🔗 University Affiliations:</strong><br><br>
+            <strong>Approvals:</strong> AICTE, UGC, PCI, BCI, NCTE.<br>
+            <strong>Collaborations:</strong> Industry partnerships with TCS, Wipro, Siemens.<br>
+            <strong>International Tie-ups:</strong> Universities in USA, UK, Malaysia for exchange programs.<br>
+            <strong>Research:</strong> Collaborations with DRDO, ISRO for projects.<br><br>
+            <em>Strong affiliations enhance academic and research opportunities.</em>
+          `;
+        } else if (question.includes("research") || question.includes("project") || question.includes("innovation")) {
+          return `
+            <strong>🔬 Research Opportunities:</strong><br><br>
+            <strong>Research Centres:</strong> AI, IoT, renewable energy, biotechnology.<br>
+            <strong>Funding:</strong> Grants from DST, UGC, and industry partners.<br>
+            <strong>Publications:</strong> Faculty and students publish in IEEE, Springer, Elsevier.<br>
+            <strong>Projects:</strong> Student-led projects with faculty mentorship.<br><br>
+            <em>Encourages innovation and cutting-edge research.</em>
+          `;
+        } else if (question.includes("international") || question.includes("abroad") || question.includes("exchange")) {
+          return `
+            <strong>🌍 International Programs:</strong><br><br>
+            <strong>Exchange Programs:</strong> Semester abroad in USA, UK, Malaysia.<br>
+            <strong>Dual Degrees:</strong> Collaborative programs with foreign universities.<br>
+            <strong>Eligibility:</strong> Minimum 7.0 CGPA, program-specific criteria.<br>
+            <strong>Support:</strong> International office assists with visas and funding.<br><br>
+            <em>Global exposure for students and faculty.</em>
+          `;
+        } else if (question.includes("contact") || question.includes("address") || question.includes("phone") || question.includes("email")) {
+          return `
+            <strong>📞 Contact Information:</strong><br><br>
+            <strong>Address:</strong> 17 Km Stone, NH-2, Mathura-Delhi Road, Mathura, UP, India.<br>
+            <strong>Phone:</strong> +91-565-2765000, +91-805-520-1074.<br>
+            <strong>Email:</strong> info@gla.ac.in, admissions@gla.ac.in.<br>
+            <strong>Website:</strong> www.gla.ac.in.<br><br>
+            <em>Contact us for any queries or assistance.</em>
+          `;
+        }
+
+        // Fallback for general or unrecognized questions
+        else {
+          const responses = [
+            "I'm here to help with all your questions about GLA University! Try asking about admissions, academics, fees, placements, facilities, or campus life.",
+            "That's an interesting question! Let me assist you with GLA University details. What specific topic would you like to explore?",
+            "I can provide detailed information about GLA University. Ask about programs, hostels, placements, or anything else!",
+            "Great question! I'm your GLA University assistant. Choose a topic like fees, campus life, or research opportunities for more details.",
+          ];
+          return responses[Math.floor(Math.random() * responses.length)];
+        }
+      }
+
+      // Initialize speech recognition
+      if (
+        "webkitSpeechRecognition" in window ||
+        "SpeechRecognition" in window
+      ) {
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+
+        recognition.onstart = function () {
+          isRecording = true;
+          const voiceBtn = document.getElementById("voice-btn");
+          const voiceStatus = document.getElementById("voice-status");
+          voiceBtn.classList.add("recording");
+          voiceBtn.innerHTML = '<i class="fas fa-stop"></i>';
+          voiceStatus.classList.add("show");
+          document.getElementById("voice-status-text").textContent =
+            "Listening...";
+        };
+
+        recognition.onresult = function (event) {
+          const transcript = event.results[0][0].transcript;
+          document.getElementById("user-input").value = transcript;
+          document.getElementById("voice-status-text").textContent =
+            "Processing...";
+          setTimeout(() => {
+            sendMessage();
+          }, 500);
+        };
+
+        recognition.onerror = function (event) {
+          console.error("Speech recognition error:", event.error);
+          document.getElementById("voice-status-text").textContent =
+            "Error occurred. Please try again.";
+          setTimeout(stopVoiceInput, 2000);
+        };
+
+        recognition.onend = function () {
+          stopVoiceInput();
+        };
+      }
+
+      function toggleVoiceInput() {
+        if (!recognition) {
+          alert(
+            "Speech recognition is not supported in your browser. Please try Chrome or Safari."
+          );
+          return;
+        }
+
+        if (isRecording) {
+          recognition.stop();
+        } else {
+          recognition.start();
+        }
+      }
+
+      function stopVoiceInput() {
+        isRecording = false;
+        const voiceBtn = document.getElementById("voice-btn");
+        const voiceStatus = document.getElementById("voice-status");
+        voiceBtn.classList.remove("recording");
+        voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        voiceStatus.classList.remove("show");
+      }
+
+      // Add event listeners after DOM is loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("user-input").addEventListener("keypress", handleKeyPress);
+        document.getElementById("voice-btn").addEventListener("click", toggleVoiceInput);
+        document.getElementById("send-btn").addEventListener("click", sendMessage);
+      });
+
+      // Add CSS for fadeOut animation
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateY(0); }
+                to { opacity: 0; transform: translateY(-20px); }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html> 
