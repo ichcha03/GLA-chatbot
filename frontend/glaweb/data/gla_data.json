@@ -1,0 +1,108 @@
+{
+  "admissions": {
+    "eligibility_criteria": {
+      "btech": "10+2 with Physics, Chemistry, Mathematics with minimum 60% marks",
+      "mtech": "B.Tech/B.E. in relevant discipline with minimum 60% marks",
+      "mba": "Bachelor's degree in any discipline with minimum 50% marks"
+    },
+    "entrance_exams": {
+      "btech": ["JEE Main", "UPSEE", "CUET"],
+      "mtech": ["GATE", "University Entrance Test"],
+      "mba": ["CAT", "MAT", "XAT", "CMAT"]
+    },
+    "application_process": "Online application through university website, document verification, counselling",
+    "important_dates": {
+      "application_start": "March 2024",
+      "application_end": "June 2024",
+      "counselling": "July 2024"
+    }
+  },
+  "academics": {
+    "btech_specializations": [
+      "Computer Science & Engineering",
+      "Information Technology",
+      "Electronics & Communication",
+      "Mechanical Engineering",
+      "Civil Engineering",
+      "Electrical Engineering"
+    ],
+    "mtech_specializations": [
+      "Computer Science",
+      "Software Engineering",
+      "VLSI Design",
+      "Power Systems"
+    ],
+    "mba_specializations": [
+      "Marketing",
+      "Finance",
+      "Human Resources",
+      "Operations"
+    ],
+    "examination_system": "Semester system with continuous assessment",
+    "grading_system": "10-point CGPA system"
+  },
+  "fees": {
+    "btech": {
+      "tuition_fee": "120000 per year",
+      "hostel_fee": "60000 per year",
+      "total_fee": "180000 per year"
+    },
+    "mtech": {
+      "tuition_fee": "80000 per year",
+      "hostel_fee": "60000 per year"
+    },
+    "mba": {
+      "tuition_fee": "150000 per year",
+      "hostel_fee": "60000 per year"
+    },
+    "scholarships": [
+      "Merit-based scholarships up to 50%",
+      "Need-based financial assistance",
+      "Sports scholarships",
+      "Minority scholarships"
+    ]
+  },
+  "placements": {
+    "statistics": {
+      "placement_percentage": "85%",
+      "average_package": "6.5 LPA",
+      "highest_package": "25 LPA"
+    },
+    "top_recruiters": [
+      "TCS", "Infosys", "Wipro", "Accenture", "Microsoft", "Amazon", "Google", "Adobe"
+    ],
+    "placement_cell": "Dedicated placement cell with industry partnerships"
+  },
+  "facilities": {
+    "hostel": {
+      "capacity": "2000 students",
+      "facilities": ["24x7 security", "Wi-Fi", "Mess facility", "Recreation room"],
+      "types": ["Single occupancy", "Double occupancy", "Triple occupancy"]
+    },
+    "library": {
+      "books": "50000+ books",
+      "digital_resources": "Access to online databases and e-journals",
+      "timings": "24x7 access"
+    },
+    "laboratories": [
+      "Computer labs with latest software",
+      "Electronics labs",
+      "Mechanical workshop",
+      "Research labs"
+    ],
+    "sports": ["Cricket ground", "Football field", "Basketball court", "Gymnasium", "Swimming pool"],
+    "medical": "24x7 medical center with qualified doctors"
+  },
+  "campus_life": {
+    "clubs": ["Technical clubs", "Cultural societies", "Sports clubs", "Literary societies"],
+    "events": ["Annual tech fest", "Cultural fest", "Sports meet", "Industry seminars"],
+    "food": ["Central mess", "Food courts", "Cafeterias", "Vegetarian and non-vegetarian options"],
+    "transportation": "Bus facility from major cities and railway stations"
+  },
+  "contact": {
+    "address": "GLA University, Mathura, Uttar Pradesh",
+    "phone": "+91-565-2763001",
+    "email": "info@gla.ac.in",
+    "website": "www.gla.ac.in"
+  }
+}
